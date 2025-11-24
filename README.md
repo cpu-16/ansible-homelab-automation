@@ -1,4 +1,3 @@
-# ansible-homelab-automation
 # 🚀 Automatización de Servidores Linux con Ansible (Homelab)
 
 <div align="center">
@@ -43,10 +42,6 @@ Este documento describe cómo:
   - Permisos `sudo` sin contraseña (solo para laboratorio).
 - Ejecutar un **playbook de actualización (`apt update` + `apt upgrade`)** en todos los nodos de forma centralizada.
 
-El formato está pensado para ser publicado como `README.md` en un repositorio público (sin exponer usuarios reales ni IP internas).
-
-![Arquitectura del Laboratorio](images/arquitectura-laboratorio.png)
-
 ---
 
 ## 🏗 Arquitectura del Laboratorio
@@ -79,7 +74,7 @@ El formato está pensado para ser publicado como `README.md` en un repositorio p
   sudo apt install -y ansible
   ```
 
-![Versión de Ansible instalada](images/ansible-version.png)
+![Versión de Ansible instalada](images/version.png)
 
 ### En los nodos gestionados
 
@@ -109,21 +104,10 @@ ansible-homelab/
 ├── playbooks/
 │   └── update-upgrade.yml
 ├── ansible.cfg
-└── images/
-    ├── arquitectura-laboratorio.png
-    ├── ansible-version.png
-    ├── estructura-proyecto.png
-    ├── hosts-ini.png
-    ├── ansible-cfg.png
-    ├── ssh-keys.png
-    ├── ssh-conexion.png
-    ├── sudoers-config.png
-    ├── ansible-ping.png
-    ├── playbook-codigo.png
-    └── playbook-ejecucion.png
+
 ```
 
-![Estructura del proyecto en VS Code](images/estructura-proyecto.png)
+![Estructura del proyecto en VS Code](images/estructura.png)
 
 ---
 
@@ -162,8 +146,6 @@ ansible_ssh_private_key_file=~/.ssh/id_ansible_homelab
 - `ansible_user=ansible-svc` → usuario de servicio que se creará en cada nodo.
 - `ansible_connection=local` en `node-wsl` indica que las tareas se ejecutan localmente.
 
-![Contenido de hosts.ini](images/hosts-ini.png)
-
 ---
 
 ## ⚙️ Configuración Global `ansible.cfg`
@@ -186,8 +168,6 @@ interpreter_python  = /usr/bin/python3
 - `host_key_checking=False` → evita confirmación interactiva de huellas SSH (útil en laboratorio).
 - `forks` → cantidad de hosts que Ansible puede gestionar en paralelo.
 
-![Configuración de ansible.cfg](images/ansible-cfg.png)
-
 ---
 
 ## 🔐 Clave SSH para Automatización
@@ -208,7 +188,7 @@ Se generan:
 - `~/.ssh/id_ansible_homelab` → clave privada (NO subir a Git).
 - `~/.ssh/id_ansible_homelab.pub` → clave pública (se copia a los nodos).
 
-![Claves SSH generadas](images/ssh-keys.png)
+![Claves SSH generadas](images/ssh.png)
 
 ---
 
@@ -251,8 +231,6 @@ ssh -i ~/.ssh/id_ansible_homelab ansible-svc@10.10.0.11
 
 Si el acceso funciona sin pedir contraseña, la clave está bien configurada.
 
-![Conexión SSH exitosa como ansible-svc](images/ssh-conexion.png)
-
 ---
 
 ## 🛡 Configuración de `sudo` para el Usuario de Servicio
@@ -288,7 +266,7 @@ root
 
 sin pedir contraseña.
 
-![Configuración de sudoers y prueba](images/sudoers-config.png)
+![Configuración de sudoers y prueba](images/sudoers.png)
 
 ---
 
@@ -324,7 +302,7 @@ ansible all_hosts -m ping -b
 - `-b` → usa become (sudo).
 - Confirma que el usuario `ansible-svc` puede usar sudo sin contraseña.
 
-![Resultados de ansible ping](images/ansible-ping.png)
+![Resultados de ansible ping](images/ping.png)
 
 ---
 
@@ -360,8 +338,6 @@ ansible all_hosts -m ping -b
 - **Segunda tarea:**
   - `upgrade: yes` → actualización estándar de paquetes (`apt upgrade`).
 
-![Playbook en VS Code](images/playbook-codigo.png)
-
 ---
 
 ## ▶️ Ejecución del Playbook
@@ -386,7 +362,7 @@ node-wsl       : ok=3  changed=0  failed=0
 - `changed` → indica que hubo cambios (por ejemplo, se instalaron actualizaciones).
 - `failed` → debe ser 0 en todos los nodos.
 
-![Ejecución completa del playbook](images/playbook-ejecucion.png)
+![Ejecución completa del playbook](images/ejecucion.png)
 
 ---
 
