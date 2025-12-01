@@ -40,7 +40,7 @@ Este documento describe cómo:
 - Usar un **usuario de servicio dedicado** (por ejemplo `ansible-svc`) con:
   - Acceso por **clave SSH**.
   - Permisos `sudo` sin contraseña (solo para laboratorio).
-- Ejecutar un **playbook de actualización (`apt update` + `apt upgrade`)** en todos los nodos de forma centralizada.
+- Ejecutar un **playbook de actualización (`apt update` + `apt upgrade`)** en todos los nodos de forma centralizada y otro para actualizar imagenes docker en un nodo.
 
 ---
 
