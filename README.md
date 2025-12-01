@@ -365,7 +365,86 @@ node-wsl       : ok=3  changed=0  failed=0
 ![Ejecución completa del playbook](images/ejecucion.png)
 
 ---
+## 🐳 Playbook de Actualización de Contenedores Docker (n8n, Qdrant, Langflow, Nocodb)
 
+Además de actualizar paquetes del sistema, Ansible también puede automatizar la actualización de contenedores Docker que se gestionan con `docker compose`.
+
+En este ejemplo se actualizan varios servicios de aplicaciones que corren en el host `node-ubuntu`:
+
+* Stack `n8n-ngrok` → servicios `n8n` y `qdrant`.
+* Stack `langflow-stack` → servicio `langflow`.
+* Stack `nocodb` → servicio `nocodb`.
+
+### 🧩 Playbook de ejemplo
+
+Archivo: `playbooks/update-docker-apps.yml`
+```yaml
+---
+- name: Actualizar contenedores de aplicaciones (n8n, qdrant, langflow, nocodb)
+  hosts: node-ubuntu
+  become: true
+  become_method: sudo
+
+  vars:
+    n8n_stack_dir: /home/labuser/n8n-ngrok
+    langflow_stack_dir: /home/labuser/langflow-stack
+    nocodb_stack_dir: /home/labuser/nocodb
+
+  tasks:
+    - name: Descargar últimas imágenes de n8n y qdrant
+      ansible.builtin.command:
+        cmd: "docker compose pull n8n qdrant"
+        chdir: "{{ n8n_stack_dir }}"
+
+    - name: Recrear contenedores n8n y qdrant con nuevas imágenes
+      ansible.builtin.command:
+        cmd: "docker compose up -d --force-recreate n8n qdrant"
+        chdir: "{{ n8n_stack_dir }}"
+
+    - name: Descargar y actualizar langflow
+      ansible.builtin.command:
+        cmd: "docker compose pull langflow && docker compose up -d --force-recreate langflow"
+        chdir: "{{ langflow_stack_dir }}"
+
+    - name: Descargar y actualizar nocodb
+      ansible.builtin.command:
+        cmd: "docker compose pull nocodb && docker compose up -d --force-recreate nocodb"
+        chdir: "{{ nocodb_stack_dir }}"
+```
+
+🔒 **Importante:** Este playbook no elimina volúmenes. `docker compose up -d --force-recreate` recrea los contenedores con la nueva imagen pero mantiene los volúmenes y datos existentes.
+
+![Creación del playbook para actualizar las imagenes](images/actualizar.png)
+
+### 📌 Explicación rápida
+
+* `hosts: node-ubuntu` → solo se ejecuta en el servidor donde viven esos `docker-compose.yml`.
+* `become: true` → se necesitan permisos de root para ejecutar `docker compose`.
+* `n8n_stack_dir`, `langflow_stack_dir`, `nocodb_stack_dir` → rutas donde viven los respectivos `docker-compose.yml`.
+* Para cada stack se hace:
+   1. `docker compose pull <servicio>` → descarga la última imagen disponible.
+   2. `docker compose up -d --force-recreate <servicio>` → recrea el contenedor usando esa imagen.
+
+### ▶️ Ejecución del Playbook
+
+Desde el nodo de control:
+```bash
+ansible-playbook playbooks/update-docker-apps.yml
+```
+
+Ejemplo de resumen final:
+```
+PLAY RECAP
+node-ubuntu : ok=6  changed=4  failed=0  skipped=0  rescued=0  ignored=0
+```
+
+* `ok` → tareas ejecutadas correctamente.
+* `changed` → indica que se descargaron imágenes nuevas o se recrearon contenedores.
+* `failed` → debe ser 0.
+* 
+![Ejecución del playbook](images/n8n.png)
+
+---
 ## 🔎 Troubleshooting Básico
 
 ### Missing sudo password
