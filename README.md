@@ -414,7 +414,7 @@ Archivo: `playbooks/update-docker-apps.yml`
 
 🔒 **Importante:** Este playbook no elimina volúmenes. `docker compose up -d --force-recreate` recrea los contenedores con la nueva imagen pero mantiene los volúmenes y datos existentes.
 
-![Creación del playbook para actualizar las imagenes](images/actualizar.png)
+![Creación del playbook para actualizar las imagenes](images/n8n.png)
 
 ### 📌 Explicación rápida
 
@@ -442,7 +442,7 @@ node-ubuntu : ok=6  changed=4  failed=0  skipped=0  rescued=0  ignored=0
 * `changed` → indica que se descargaron imágenes nuevas o se recrearon contenedores.
 * `failed` → debe ser 0.
 * 
-![Ejecución del playbook](images/n8n.png)
+![Ejecución del playbook](images/actualizar.png)
 
 ---
 ## 🔎 Troubleshooting Básico
